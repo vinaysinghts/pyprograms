@@ -20,7 +20,7 @@ done, negation set last, hence negate final result
 final result [1,1,T]
 """
 import math
-dec = int(input())
+dec = int(input("enter a number: "))
 def main():
     result = ""
     if abs(dec) == 2:
@@ -34,12 +34,12 @@ def main():
         n,maxVal = nthPower(abs(dec),abs(dec))
         if n != None and maxVal!= None:
         #2 sum of total remaining should be less than dec
-            # sumRemain = addPower(n-1)
-            # print("SumRemain",sumRemain)
-            # if sumRemain > abs(dec):
-                # n -= 1
+            p = n
+            sumRemainP = addPower(p-1)
+            if sumRemainP >= abs(dec):
+                p -= 1
             #create a list of n length
-            resultString = [0]*(n+1)
+            resultString = [0]*(p+1)
         #3 repeat above and set the list    
             resultStringTemp,negateBit = doTheTrick(abs(dec),n+1,resultString,0)
             if negateBit == 1:
@@ -58,32 +58,35 @@ def main():
     print (result)
 
 def doTheTrick(dec,n,resultString,negateBit):
-    print("n:",n," dec:",dec)
     m,maxVal = nthPower(dec,n)
     if m != None and maxVal!= None:
         print("N:",m," maxVal:",maxVal)
         sumRemain = addPower(m-1)
         print("SumRemain",sumRemain)
-        if sumRemain > dec:
+        if sumRemain >= dec:
+            print("sumRemain[",sumRemain,"] >= dec [",dec,"]")
             m -= 1
-            resultString,negateBit = doTheTrick(dec,m,resultString,negateBit)
-        else:
-            resultString[m] = 1
+            m,maxVal = nthPower(dec,m)
+            print("N1:",m," maxVal1:",maxVal)
+            sumRemain = addPower(m-1)
+            print("SumRemain1",sumRemain)
+            #resultString,negateBit = doTheTrick(dec,m,resultString,negateBit)        
+        resultString[m] = 1
+        print("setting resultList -->",resultString)
+        rem = dec - maxVal
+        print("rem: ",rem)
+        if rem == 0:
+            return resultString,negateBit
+        elif rem == 1:
+            resultString[0] = 1
             print("setting resultList -->",resultString)
-            rem = dec - maxVal
-            print("rem: ",rem)
-            if rem == 0:
-                return resultString,negateBit
-            elif rem == 1:
-                resultString[0] = 1
-                print("setting resultList -->",resultString)
-                return resultString,negateBit
-            elif rem < 0:
-                resultString = negate(resultString)
-                negateBit = 1 - negateBit
-                print("negated list: ",resultString," negBit:",negateBit)
-            if m > 0:
-                resultString,negateBit = doTheTrick(abs(rem),m,resultString,negateBit)
+            return resultString,negateBit
+        elif rem < 0:
+            resultString = negate(resultString)
+            negateBit = 1 - negateBit
+            print("negated list: ",resultString," negBit:",negateBit)
+        if m > 0:
+            resultString,negateBit = doTheTrick(abs(rem),m-1,resultString,negateBit)
         return resultString,negateBit
     else:
         print("Woooopppsssss..")
@@ -118,11 +121,11 @@ def nthPower(x,length):
     elif length == -1:
         return 0,0
     else:
-        for i in range(length):
+        for i in range(length+1):
             val = int(math.pow(3,i))
             if val >= x:
                 return i,val
-            elif i == length-1:
+            if i == length:
                 return i,val
             
 if __name__ == "__main__":
